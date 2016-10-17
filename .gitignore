@@ -1,2 +1,5 @@
 # JetBrains folder
 .idea
+
+# Sublime project
+*.sublime-project
