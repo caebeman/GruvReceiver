@@ -1,2 +1,2 @@
-# GruvReceiver
-ChromeCast Receiver for GruvCast App
+# GrüvReceiver
+ChromeCast Receiver for GrüvCast App
