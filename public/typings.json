@@ -1,0 +1,5 @@
+{
+  "globalDependencies": {
+    "chrome-cast": "registry:dt/chrome-cast#0.0.0+20160317120654"
+  }
+}

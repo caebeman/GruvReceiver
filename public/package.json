@@ -1,0 +1,25 @@
+{
+  "name": "gruvreceiver",
+  "version": "0.0.1",
+  "description": "ReChromecast receiver application for GruvCast app",
+  "main": "receiver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caebeman/GruvReceiver.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caebeman/GruvReceiver/issues"
+  },
+  "homepage": "https://github.com/caebeman/GruvReceiver#readme",
+  "devDependencies": {
+    "firebase-tools": "^3.1.0",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.1.2",
+    "typescript": "^2.0.6"
+  }
+}

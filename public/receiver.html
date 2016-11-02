@@ -42,7 +42,7 @@ The overlay layer holds:
 	<script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
 	<script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
 	<script type="text/javascript" src="play.js"></script>
-	<script type="text/javascript" src="test.js"></script>
+	<script type="text/javascript" src="receiver.js"></script>
 </head>
 <body style="margin: 0">
     <div id="player" class="player">
@@ -86,7 +86,8 @@ The overlay layer holds:
     </div>
     <script>
       var playerDiv = document.getElementById('player');
-      new gruvplayer.CastPlayer(playerDiv).start();
+      // new gruvplayer.CastPlayer(playerDiv).start();
+      var rec = new GruvReceiver(playerDiv, cast);	
       // test();
     </script>
 </body>

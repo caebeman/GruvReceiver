@@ -1841,7 +1841,7 @@ sampleplayer.getType_ = function(media) {
  * @return {string} the time (in HH:MM:SS)
  * @private
  */
-sampleplayer.formatDuration_ = function(dur) {
+sampleplayer.formatDuration_ = function(du2r) {
   dur = Math.floor(dur);
   function digit(n) { return ('00' + Math.round(n)).slice(-2); }
   var hr = Math.floor(dur / 3600);
