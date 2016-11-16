@@ -4,6 +4,7 @@
   "description": "ReChromecast receiver application for GruvCast app",
   "main": "receiver.js",
   "scripts": {
+    "dev": "lite-server -c ./bs-config.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +21,7 @@
     "firebase-tools": "^3.1.0",
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.1.2",
+    "lite-server": "^2.2.2",
     "typescript": "^2.0.6"
   }
 }

@@ -31,16 +31,98 @@
   100% { margin-left: 100%; }
 }
 
+
+/*******************************************************/
+/*******************************************************/
+/*             Custom Reciever Styles                  */
+/*******************************************************/
+/*******************************************************/
+.left-col{
+
+}
+.right-col{
+
+
+}
+
+.up-next{
+  list-style-type: none;
+}
+.nextSong{
+  padding: 10px;
+}
+table{
+  width: 100%;
+  padding-left: 25px;
+}
+.upNextLabel{
+  text-align: center;
+  align-items: flex-start;
+  width: 100%;
+  display: block;
+  margin: 0px;
+  padding-top: 10px;
+  font-size: 36px;
+}
+.vertical-center {
+/*  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
+}
+.albumArt{
+  padding-top: 7px;
+  padding-right: 10px;
+}
+.songName{
+  padding-right: 8px;
+}
+.dash{
+  
+}
+.wrap-text{
+  width:1%;
+  white-space:nowrap;
+}
+.artist{
+  padding-left: 8px;
+  /* dim artist a bit*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ------------------------------------------------- */
 /* Player                                            */
 /* ------------------------------------------------- */
 
 body {
-  background-color: #000;
+  /*background-color: #000;*/
 }
 
 .player {
-  background-image: url("assets/harambe.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

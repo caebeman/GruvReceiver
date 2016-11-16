@@ -1,7 +1,9 @@
+/// <reference path="typings/globals/jquery/index.d.ts" />
 
 const NAMESPACE = 'urn:x-cast:com.gruvcast.gruvcast';
 
-export default class GruvReceiver {
+
+class GruvReceiver {
 	// html audio element
 	private mediaElement: HTMLAudioElement; // html audio element
 
@@ -14,18 +16,42 @@ export default class GruvReceiver {
 	// hold songs
 	private songList: Array<any> = new Array<any>();
 
+	private connectedUsers: Array<any> = new Array<any>();
+
+	// Modify to disable debug
+	private debug: boolean = true;
+
 	constructor(private element:HTMLElement, private cast) {
 		this.mediaElement = this.element.querySelector('audio');
-		this.initListeners();
+		this.initMediaEventListeners();
 
+		// Set logging
+		if(this.debug){
+			cast.player.api.setLoggerLevel(cast.player.api.LoggerLevel.DEBUG);
+			cast.receiver.logger.setLevelValue(cast.receiver.LoggerLevel.DEBUG);
+		}
+
+
+		// get api instances
 		this.receiverManager = cast.receiver.CastReceiverManager.getInstance();
 		this.messageBus = this.receiverManager.getCastMessageBus(NAMESPACE, cast.receiver.CastMessageBus.MessageType.JSON);
-		this.receiverManager.onReceiverConnected = this.onSenderConnected;
-		console.log("Got receiver: " + this.messageBus);
+
+		
+		// Init receiver handlers
+		this.initReceiverListeners();
+
+		// ....
+
+		
+		// Init message listeners
+		this.initMessageListeners();
+
+
+		
 	}
 
 	// audio event listeners
-	initListeners() {
+	initMediaEventListeners() {
 		this.mediaElement.addEventListener('error', (error)	=> {
 			console.log('Error');
 		}); 
@@ -37,12 +63,46 @@ export default class GruvReceiver {
 		});
 
 	}
-	// init our playlist queue here
-	// determine who is admin
-	onSenderConnected(event:any) {
+	initMessageListeners() {
+		this.receiverManager.onReceiverConnected = this.onSenderConnected;
+	}
+
+	initReceiverListeners() {
 
 	}
 
+	
+
+
+	// init our playlist queue here
+	// determine who is admin
+	onSenderConnected(event:any) {
+		if(!this.admin){
+			this.admin = event.data.userId;
+		}
+		this.connectedUsers.push(event.data.userId);
+	}
+
+	onSenderDisconnected() {
+
+	}
+
+
+	updateUpNext(songs:Array<any>){
+		$('#upNextList').empty();
+		songs.forEach(() =>{
+			// put songs in display
+		})
+
+	}
+
+	
 	// other functions taht we need to define
 
 }
+
+/* (param: [optional type]) => {
+	
+})
+
+*/

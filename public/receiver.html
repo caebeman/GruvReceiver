@@ -33,62 +33,149 @@ The overlay layer holds:
    c. controls for Pause / Seek
  -->
 <!DOCTYPE html>
-<html>
+<html lang='en'>
 <head>
 	<!-- Change the title tag to your app's name to display as the details text on the Cast device picker -->
 	<title>Casting app name</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="player.css" />
-	<script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
-	<script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
-	<script type="text/javascript" src="play.js"></script>
-	<script type="text/javascript" src="receiver.js"></script>
+    <!-- Custom css and bootstrap -->
+	<link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/player.css" />
+    <!-- Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Chromecast stuff -->
+    <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+    <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
+    <!-- Custom js -->
+    <script type="text/javascript" src="receiver.js"></script>
+
 </head>
 <body style="margin: 0">
-    <div id="player" class="player">
-        <div class="media">
-            <audio></audio>
-        </div>
-        <div class="logo"></div>
-        <div class="spinner"></div>
-        <div class="watermark"></div>
-        <div class="gradient"></div>
-        <div class="overlay">
-            <div class="media-info">
-                <div class="media-artwork"></div>
-                <div class="media-text">
-                    <div class="media-title"></div>
-                    <div class="media-subtitle"></div>
-                </div>
-            </div>  
-            <div class="preview-mode-info">
-                <div class="preview-mode-artwork"></div>
-                <div class="preview-mode-text">
-	                <div class="preview-mode-timer">
-                        <div class="preview-mode-timer-starts">Up next in&nbsp;</div>
-                        <div class="preview-mode-timer-countdown"></div>
-                        <div class="preview-mode-timer-sec">&nbsp;secs...</div>
+    <div class='container-fluid'>
+        
+        <div class='col-md-6 left-col'>
+            <div id="player" class="player">
+            <div class="media">
+                <audio></audio>
+            </div>
+            <div class="logo"></div>
+            <div class="spinner"></div>
+            <div class="watermark"></div>
+            <div class="gradient"></div>
+            <div class="overlay">
+                <div class="media-info">
+                    <div class="media-artwork"></div>
+                    <div class="media-text">
+                        <div class="media-title"></div>
+                        <div class="media-subtitle"></div>
                     </div>
-                    <div class="preview-mode-title"></div>
-                    <div class="preview-mode-subtitle"></div>
+                </div>  
+                <div class="preview-mode-info">
+                    <div class="preview-mode-artwork"></div>
+                    <div class="preview-mode-text">
+                        <div class="preview-mode-timer">
+                            <div class="preview-mode-timer-starts">Up next in&nbsp;</div>
+                            <div class="preview-mode-timer-countdown"></div>
+                            <div class="preview-mode-timer-sec">&nbsp;secs...</div>
+                        </div>
+                        <div class="preview-mode-title"></div>
+                        <div class="preview-mode-subtitle"></div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <span class="controls-play-pause"></span>
+                    <span class="controls-cur-time"></span>
+                    <span class="controls-total-time"></span>
+                    <div class="controls-progress">
+                        <div class="controls-progress-inner progressBar"></div>
+                        <div class="controls-progress-thumb"></div>
+                    </div>
                 </div>
             </div>
-            <div class="controls">
-                <span class="controls-play-pause"></span>
-                <span class="controls-cur-time"></span>
-                <span class="controls-total-time"></span>
-                <div class="controls-progress">
-                    <div class="controls-progress-inner progressBar"></div>
-                    <div class="controls-progress-thumb"></div>
-                </div>
-            </div>
+        </div>
+        </div>
+        <div class='col-md-6 right-col'>
+            <div>
+                <label for="upNext" class="upNextLabel">Up Next</label>
+                <table id='upNext' class='vertical-center'>
+                    <tbody>
+                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr>
+                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr>
+                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr>
+                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr>
+                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr>
+                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr>
+                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr>
+                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr>
+<!--                        <tr>
+                            <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
+                            <td class="songName wrap-text">Song Name</td>
+                            <td class="wrap-text">-</td>
+                            <td class="artist">Artist Name</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+
+
+
+
+<!--                 <ul class='up-next' id='upNextList'>
+                    <li class='nextSong'><img src=''></img>Ultralight Beam - Kanye West</li>
+                    <li class='nextSong'>No Problem - Chance the Rapper</li>
+                    <li class='nextSong'>One Day - Matisyahu</li>
+                    <li class='nextSong'>Example Song 3 - Artist</li>
+                    <li class='nextSong'>Example Song 4 - Artist 4</li>
+                </ul>
+ -->            </div>
         </div>
     </div>
+
+    
     <script>
       var playerDiv = document.getElementById('player');
-      // new gruvplayer.CastPlayer(playerDiv).start();
-      var rec = new GruvReceiver(playerDiv, cast);	
-      // test();
+      var rec = new GruvReceiver(playerDiv, cast, $);	
     </script>
 </body>
 </html>
