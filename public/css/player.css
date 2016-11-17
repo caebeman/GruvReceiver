@@ -57,16 +57,17 @@ table{
 }
 .upNextLabel{
   text-align: center;
-  align-items: flex-start;
+  /*align-items: flex-end;*/
   width: 100%;
   display: block;
   margin: 0px;
   padding-top: 10px;
+  height: 10%;
   font-size: 36px;
 }
 .vertical-center {
-/*  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
-  min-height: 100vh; /* These two lines are counted as one :-)       */
+  min-height: 100%; /*  Fallback for browsers do NOT support vh unit */
+  /*min-height: 100vh;  These two lines are counted as one :-)       */
 
   display: flex;
   align-items: center;

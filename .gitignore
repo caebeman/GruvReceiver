@@ -13,3 +13,4 @@ reference
 **/*.js.map
 # js files can just be compiled
 **/*.js
+!gulpfile.js
