@@ -34,8 +34,9 @@ class GruvReceiver {
 
 		// get api instances
 		this.receiverManager = cast.receiver.CastReceiverManager.getInstance();
+		this.receiverManager.start();
 		this.messageBus = this.receiverManager.getCastMessageBus(NAMESPACE, cast.receiver.CastMessageBus.MessageType.JSON);
-
+		this.messageBus.onMessage = this.onMessage();
 		
 		// Init receiver handlers
 		this.initReceiverListeners();
@@ -48,6 +49,12 @@ class GruvReceiver {
 
 
 		
+	}
+
+	onMessage(event:any){
+		console.log(event.data);
+		var audioObj = new Audio(event.data.previewURL);
+ 		audioObj.play();
 	}
 
 	// audio event listeners
