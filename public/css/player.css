@@ -42,7 +42,6 @@
 }
 .right-col{
 
-
 }
 
 .up-next{
@@ -120,11 +119,11 @@ table{
 /* ------------------------------------------------- */
 
 body {
-  /*background-color: #000;*/
+  background-color: #000;
 }
 
 .player {
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   color: #f1f1f1;
@@ -145,7 +144,7 @@ body {
   position: absolute;
   bottom: 50%;
   left: 50%;
-  background-image: url("assets/logo.png");
+  background-image: url("assets/albumArt64.png");
   margin-bottom: -96px;
   margin-left: -96px;
   width: 192px;

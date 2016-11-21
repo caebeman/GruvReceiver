@@ -52,26 +52,45 @@ The overlay layer holds:
     <script type="text/javascript" src="receiver.js"></script>
 
 </head>
-<body style="margin: 0">
+<body style="margin: 0" background="css/assets/background.jpg">
     <div class='container-fluid'>
-        
+
+        <!-- Player portion of code (left hand side of screen) -->
         <div class='col-md-6 left-col'>
             <div id="player" class="player">
             <div class="media">
-                <audio></audio>
             </div>
-            <div class="logo"></div>
-            <div class="spinner"></div>
-            <div class="watermark"></div>
-            <div class="gradient"></div>
+
+            <div class="logo">
+
+            </div>
+
+            <div class="spinner">
+
+            </div>
+
+            <div class="watermark">
+
+            </div>
+
+            <div class="gradient">
+
+            </div>
+
+            <!-- this will media artwork and information during loading.. should ignore this for now and get
+             basic things working
+             -->
             <div class="overlay">
                 <div class="media-info">
-                    <div class="media-artwork"></div>
+                    <div class="media-artwork">
+                    </div>
                     <div class="media-text">
                         <div class="media-title"></div>
                         <div class="media-subtitle"></div>
                     </div>
-                </div>  
+                </div>
+
+                <!-- -->
                 <div class="preview-mode-info">
                     <div class="preview-mode-artwork"></div>
                     <div class="preview-mode-text">
@@ -84,6 +103,7 @@ The overlay layer holds:
                         <div class="preview-mode-subtitle"></div>
                     </div>
                 </div>
+
                 <div class="controls">
                     <span class="controls-play-pause"></span>
                     <span class="controls-cur-time"></span>
@@ -96,11 +116,13 @@ The overlay layer holds:
             </div>
         </div>
         </div>
+
+        <!-- Upnext Portion of code (right hand side of screen) -->
         <div class='col-md-6 right-col'>
             <div>
                 <label for="upNext" class="row upNextLabel">Up Next</label>
-                <table id='upNext' class='vertical-center'>
-                    <tbody>
+                <table id="upNext" class='vertical-center'>
+                    <tbody  id='upNextList'>
                         <tr>
                             <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
                             <td class="songName wrap-text">Song Name</td>
@@ -174,8 +196,11 @@ The overlay layer holds:
 
     
     <script>
+
       var playerDiv = document.getElementById('player');
-      var rec = new GruvReceiver(playerDiv, cast, $);	
+      var rec = new GruvReceiver(playerDiv, cast, $);
+
+
     </script>
 </body>
 </html>

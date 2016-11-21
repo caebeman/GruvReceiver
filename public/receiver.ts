@@ -12,6 +12,8 @@ class GruvReceiver {
 
 	// use spotify user??
 	private admin: any;
+	private counter = 0;
+
 
 	// hold songs
 	private songList: Array<any> = new Array<any>();
@@ -95,17 +97,71 @@ class GruvReceiver {
 	}
 
 
+
+	// update our Up Next list
 	updateUpNext(songs:Array<any>){
-		$('#upNextList').empty();
-		songs.forEach(() =>{
-			// put songs in display
-		})
+
+		// get upNextList form html
+		let myList = $('#upNextList');
+
+		// empty current list
+		myList.empty();
+
+		// we only want to show the next 10 songs. Variable size so we know how long to append
+		let listSize = songs.length >= 10 ? 10 : songs.length;
+
+		// for each song in our list, add to Up Next
+		for (let i = 0; i < listSize; i++) {
+
+			// append to our pretty table in the html
+			myList.append(
+				`<tr>	
+				<td class=\"albumArt wrap-text\"><img src=\"{{songs[i].albumArt}}\" alt=\"Album artwork\"></td>
+				<td class=\"songName wrap-text\">{{songs[i].name}}</td>
+				<td class=\"wrap-text\">{{song[i].albumName}}</td>
+				<td class=\"artist\">{{song[i].artist}}</td>
+			</tr>`);
+		}
+	}
+
+	// incrementer counter, queue up next playing song
+	// this will have some substantial sausage in it
+	songEnding(songs:Array<any>) {
+		this.counter++;
+		this.updatePlaying(songs);
+	}
+
+
+	// update currently playing song
+	// this will also probably have a sausage in it
+	// WIP
+	/*                <div class="media-info">
+	 <div class="media-artwork">
+	 </div>
+	 <div class="media-text">
+	 <div class="media-title"></div>
+	 <div class="media-subtitle"></div>
+	 */
+	updatePlaying(songs:Array<any>) {
+		// the song holding the information
+		let mySong = songs[this.counter];
+
+		// update album art
+		$('#media-artwork').css('background-image', 'url(' + mySong.albumArt + ')');
+
+		// update artist
+		$('#media-title').text(mySong.artist);
+
+		// update album
+		$('#media-subtitle').text(mySong.albumName);
 
 	}
 
-	
-	// other functions taht we need to define
 
+	
+	// other functions that we need to define
+
+	// load informatoin for songs
 }
 
 /* (param: [optional type]) => {

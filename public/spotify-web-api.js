@@ -1,20 +1,4 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Gist
- @caebeman
- Watch 17
-  Star 245
-  Fork 36 JMPerez/spotify-web-api-js
- Code  Issues 2  Pull requests 0  Projects 0  Wiki  Pulse  Graphs
-Branch: master Find file Copy pathspotify-web-api-js/src/spotify-web-api.js
-0a4ea1a  8 days ago
-@skovmand skovmand Identical typescript jsdocs (#48)
-6 contributors @JMPerez @skovmand @hughrawlinson @longears @danmactough @asmitter
-RawBlameHistory     
-1442 lines (1354 sloc)  67.8 KB
+
 /* global module */
 'use strict';
 var SpotifyWebApi = (function() {
