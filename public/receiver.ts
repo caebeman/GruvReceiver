@@ -12,6 +12,8 @@ class GruvReceiver {
 
 	// use spotify user??
 	private admin: any;
+
+	// keep track of our position in the list of songs
 	private counter = 0;
 
 
@@ -139,8 +141,9 @@ class GruvReceiver {
 	 <div class="media-artwork">
 	 </div>
 	 <div class="media-text">
-	 <div class="media-title"></div>
-	 <div class="media-subtitle"></div>
+	 	<div class="media-title"></div>
+	 	<div class="media-subtitle"></div>
+	 </div>
 	 */
 	updatePlaying(songs:Array<any>) {
 		// the song holding the information
