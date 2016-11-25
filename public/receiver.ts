@@ -5,7 +5,7 @@ const NAMESPACE = 'urn:x-cast:com.gruvcast.gruvcast';
 
 class GruvReceiver {
 	// html audio element
-	private mediaElement: HTMLAudioElement; // html audio element
+	private mediaElement: HTMLMediaElement; // html audio element
 
 	public receiverManager: any;
 	public messageBus: any;
@@ -26,8 +26,7 @@ class GruvReceiver {
 	private debug: boolean = true;
 
 	constructor(private element:HTMLElement, private cast) {
-		this.mediaElement = this.element.querySelector('audio');
-		this.initMediaEventListeners();
+		this.mediaElement = <HTMLMediaElement>this.element.querySelector('audioPlayer');
 
 		// Set logging
 		if(this.debug){
@@ -38,12 +37,15 @@ class GruvReceiver {
 
 		// get api instances
 		this.receiverManager = cast.receiver.CastReceiverManager.getInstance();
-		this.receiverManager.start();
 		this.messageBus = this.receiverManager.getCastMessageBus(NAMESPACE, cast.receiver.CastMessageBus.MessageType.JSON);
-		this.messageBus.onMessage = this.onMessage();
+		// need to call this after delcaring our namespace
+		this.receiverManager.start();
+
+
+
 		
 		// Init receiver handlers
-		this.initReceiverListeners();
+		this.initConnectionListeners();
 
 		// ....
 
@@ -57,29 +59,34 @@ class GruvReceiver {
 
 	onMessage(event:any){
 		console.log(event.data);
-		var audioObj = new Audio(event.data.previewURL);
- 		audioObj.play();
+		// var audioObj = new Audio(event.data.previewURL);
+		let audio: any = $('#audioPlayer').get(0); 
+		audio.src = event.data.song.previewUrl;
+		// audio = <HTMLMediaElement> a
+		audio.play();
+ 		// audioObj.play();
 	}
 
 	// audio event listeners
 	initMediaEventListeners() {
-		this.mediaElement.addEventListener('error', (error)	=> {
-			console.log('Error');
-		}); 
-		this.mediaElement.addEventListener('playing', ()	=> {
-			console.log('Playing');
-		});
-		this.mediaElement.addEventListener('pause', ()	=> {
-			console.log('paused');
-		});
+		// this.mediaElement.addEventListener('error', (error)	=> {
+		// 	console.log('Error');
+		// }); 
+		// this.mediaElement.addEventListener('playing', ()	=> {
+		// 	console.log('Playing');
+		// });
+		// this.mediaElement.addEventListener('pause', ()	=> {
+		// 	console.log('paused');
+		// });
 
 	}
 	initMessageListeners() {
-		this.receiverManager.onReceiverConnected = this.onSenderConnected;
+		this.messageBus.onMessage = (event) => this.onMessage(event);
 	}
 
-	initReceiverListeners() {
-
+	initConnectionListeners() {
+		this.receiverManager.onSenderConnected = (event) => this.onSenderConnected(event);
+		this.receiverManager.onSenderDisconnected = (event) => this.onSenderDisconnected(event);
 	}
 
 	
@@ -88,14 +95,16 @@ class GruvReceiver {
 	// init our playlist queue here
 	// determine who is admin
 	onSenderConnected(event:any) {
+		console.log("Sender connected");
 		if(!this.admin){
 			this.admin = event.data.userId;
 		}
-		this.connectedUsers.push(event.data.userId);
+		// this.connectedUsers.push(event.data.userId);
 	}
 
-	onSenderDisconnected() {
-
+	onSenderDisconnected(event: any) {
+		console.log("exitting");
+		this.receiverManager.getInstance().stop();
 	}
 
 
@@ -170,5 +179,19 @@ class GruvReceiver {
 /* (param: [optional type]) => {
 	
 })
+
+*/
+
+
+
+/*
+	need to use:
+		() => {}
+	for callback functions so this scope is correct
+
+	redo all stuff from class monday
+
+	$('audio').get(0).play();
+
 
 */
