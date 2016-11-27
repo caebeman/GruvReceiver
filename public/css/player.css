@@ -245,7 +245,7 @@ body {
   left: 64px;
   bottom: 64px;
   right: 64px;
-  display: none;
+  display: block;
   top: auto;
 }
 
