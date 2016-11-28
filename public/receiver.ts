@@ -156,6 +156,7 @@ class GruvReceiver {
 		// add the song, and update the display
 		this.songList.push(song);
 		if(!this.hasFirstSong){
+			$("#songInfo").show();
 			this.audio.src = song.previewURL;
 			this.updatePlaying();
 			this.hasFirstSong = true;
@@ -321,6 +322,9 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 		} else {
 			// make own div with bigger css in different place css
 			$("#songTitle").text(NO_SONGS);
+			$('#album').text("");
+			$('#artists').text("");
+			$("#albumArt").prop('src', "css/assets/not_playing.png")
 
 		}
 

@@ -75,6 +75,17 @@ table{
   padding-top: 7px;
   padding-right: 10px;
 }
+
+.curAlbumArt{
+    padding-top: 125px;
+    width: 65%;
+    height: 65%;
+}
+
+.overlay{
+
+}
+
 .songName{
   padding-right: 8px;
 }
