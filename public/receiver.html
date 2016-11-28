@@ -48,13 +48,14 @@ The overlay layer holds:
     <!-- Chromecast stuff -->
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
+    <!-- <script src="node_modules/spotify-web-api-js/src/spotify-web-api.js" type="text/javascript" charset="utf-8"></script> -->
     <!-- Custom js -->
     <script type="text/javascript" src="receiver.js"></script>
 
 </head>
 <body style="margin: 0" background="css/assets/background.jpg">
     <div class='container-fluid'>
-    <audio id="audioPlayer" src="penis.wav"></audio>
+    <audio id="audioPlayer"></audio>
         <!-- Player portion of code (left hand side of screen) -->
         <div class='col-md-6 left-col'>
             <div id="player" class="player">
@@ -196,9 +197,8 @@ The overlay layer holds:
 
     
     <script>
-
-      var playerDiv = document.getElementById('player');
-      var rec = new GruvReceiver(playerDiv, cast, $);
+        var playerDiv = document.getElementById('player');
+        var rec = new GruvReceiver(playerDiv, cast, $);
 
 
     </script>

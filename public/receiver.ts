@@ -1,12 +1,48 @@
 /// <reference path="typings/globals/jquery/index.d.ts" />
+/*// <reference path="../public/node_modules/spotify-web-api-js/src/typings/spotify-web-api.d.ts" /> */
+/* /// <reference path="typings/index.d.ts" /> */
 
 const NAMESPACE = 'urn:x-cast:com.gruvcast.gruvcast';
+const UP_NEXT_COUNT:number = 9;
 
+// import SpotifyWebApi = require("./node_modules/spotify-web-api-js/src/spotify-web-api");
+
+enum CMD_TYPE {CMD_ADD_SONG, CMD_DELETE_SONG, CMD_UPDATE_PLAYLIST, CMD_PLAY, CMD_PAUSE, CMD_CHANGE_ADMIN,
+    CMD_IMPORT_PLAYLIST, CMD_SKIP, CMD_INITIALIZE_SENDER};
+class Song {
+	albumName: string;
+    songName: string;
+    artists: Array<string>;
+    previewURL: string;
+    smallAlbumArtURL: string;
+    largeAlbumArtURL: string;
+    songID: string;
+
+    constructor(albumName:string, songName:string, artists:Array<string>, previewURL:string, smallAlbumArt:string, largeAlbumArt:string, songID:string){
+    	this.albumName = albumName;
+    	this.songName = songName;
+    	this.artists = artists;
+    	this.previewURL = previewURL;
+    	this.smallAlbumArtURL = smallAlbumArt;
+    	this.largeAlbumArtURL = largeAlbumArt;
+    	this.songID = songID;
+    }
+}
+
+class Message{
+	cmd:CMD_TYPE;
+	song: Song;
+	constructor(cmd:CMD_TYPE, song:Song){
+		this.cmd = cmd;
+		this.song = song;
+	}
+}
 
 class GruvReceiver {
 	// html audio element
-	private mediaElement: HTMLMediaElement; // html audio element
+	private audio: HTMLMediaElement; // html audio element
 
+	private hasFirstSong:boolean = false;
 	public receiverManager: any;
 	public messageBus: any;
 
@@ -16,18 +52,16 @@ class GruvReceiver {
 	// keep track of our position in the list of songs
 	private counter = 0;
 
-
+	// private spotify:SpotifyWebApi;
 	// hold songs
-	private songList: Array<any> = new Array<any>();
+	private songList: Array<Song> = new Array<Song>();
 
 	private connectedUsers: Array<any> = new Array<any>();
 
 	// Modify to disable debug
 	private debug: boolean = true;
 
-	constructor(private element:HTMLElement, private cast) {
-		this.mediaElement = <HTMLMediaElement>this.element.querySelector('audioPlayer');
-
+	constructor(private element:HTMLElement, private cast, private $:JQuery) {
 		// Set logging
 		if(this.debug){
 			cast.player.api.setLoggerLevel(cast.player.api.LoggerLevel.DEBUG);
@@ -54,30 +88,120 @@ class GruvReceiver {
 		this.initMessageListeners();
 
 
+		//
+		this.initMediaEventListeners();
+
+
+		
+	}
+	// determines how to handle current message based on command type
+	onMessage(event:any){
+		switch(event.data.command) {
+		    case CMD_TYPE[CMD_TYPE.CMD_ADD_SONG]:
+		    	this.addSong(event.data.song);
+		    	break;
+		    case CMD_TYPE[CMD_TYPE.CMD_DELETE_SONG]:
+		    	this.deleteSong(event.data.song);
+		    	break;
+		    case CMD_TYPE[CMD_TYPE.CMD_UPDATE_PLAYLIST]: 
+		    	this.updatePlaylist();
+		    	break;
+		    case CMD_TYPE[CMD_TYPE.CMD_PLAY]: 
+		    	this.play();
+		    	break;
+		    case CMD_TYPE[CMD_TYPE.CMD_PAUSE]:
+		    	this.pause();
+		    	break;
+		    case CMD_TYPE[CMD_TYPE.CMD_CHANGE_ADMIN]:
+		    	this.newAdmin();
+		    	break;
+    		case CMD_TYPE[CMD_TYPE.CMD_SKIP]: 
+    			this.skipSong();
+    			break;
+    		case CMD_TYPE[CMD_TYPE.CMD_INITIALIZE_SENDER]:
+    			this.initSender();
+    			break;
+			case CMD_TYPE[CMD_TYPE.CMD_IMPORT_PLAYLIST]:
+				// this is currently unused
+				this.importPlaylist();
+				break;
+		    default:
+		    	// do nothing
+		}
 		
 	}
 
-	onMessage(event:any){
-		console.log(event.data);
-		// var audioObj = new Audio(event.data.previewURL);
-		let audio: any = $('#audioPlayer').get(0); 
-		audio.src = event.data.song.previewUrl;
-		// audio = <HTMLMediaElement> a
-		audio.play();
- 		// audioObj.play();
+	addSong(song:Song){
+		if(song.previewURL.charAt(song.previewURL.length-1) == '/'){
+			song.previewURL = song.previewURL.substring(0,song.previewURL.length-1);
+		}
+		if(song.smallAlbumArtURL.charAt(song.smallAlbumArtURL.length-1) == '/'){
+			song.smallAlbumArtURL = song.smallAlbumArtURL.substring(0,song.smallAlbumArtURL.length-1);
+		}
+		if(song.largeAlbumArtURL.charAt(song.largeAlbumArtURL.length-1) == '/'){
+			song.largeAlbumArtURL = song.largeAlbumArtURL.substring(0,song.largeAlbumArtURL.length-1);
+		}
+		this.songList.push(song);
+		if(!this.hasFirstSong){
+			this.audio.src = song.previewURL;
+			this.hasFirstSong = true;
+		}
+		this.updateUpNext();
+	}	
+	deleteSong(delSong:Song){
+		let newList:Array<Song> = new Array<Song>();
+		for(let i = 0; i < this.songList.length - 1; i++){
+			if(this.songList[i].songID != delSong.songID){
+				newList.push(this.songList[i])
+			}
+		}
+		this.songList = newList;
 	}
+
+	updatePlaylist(){
+
+	}
+
+
+	initSender(){
+
+	}
+
+	skipSong(){
+
+	}
+
+	play(){
+		this.audio.play();
+	}
+
+	pause(){
+		this.audio.pause();
+	}
+
+	importPlaylist(){
+
+	}
+
+	newAdmin(){
+
+	}
+
+
 
 	// audio event listeners
 	initMediaEventListeners() {
-		// this.mediaElement.addEventListener('error', (error)	=> {
-		// 	console.log('Error');
-		// }); 
-		// this.mediaElement.addEventListener('playing', ()	=> {
-		// 	console.log('Playing');
-		// });
-		// this.mediaElement.addEventListener('pause', ()	=> {
-		// 	console.log('paused');
-		// });
+		this.audio = <HTMLMediaElement> $('#audioPlayer').get(0); 
+
+		this.audio.addEventListener('error', (error)	=> {
+			console.log('Error');
+		}); 
+		this.audio.addEventListener('playing', ()	=> {
+			console.log('Playing');
+		});
+		this.audio.addEventListener('pause', ()	=> {
+			console.log('paused');
+		});
 
 	}
 	initMessageListeners() {
@@ -110,7 +234,7 @@ class GruvReceiver {
 
 
 	// update our Up Next list
-	updateUpNext(songs:Array<any>){
+	updateUpNext(){
 
 		// get upNextList form html
 		let myList = $('#upNextList');
@@ -119,7 +243,7 @@ class GruvReceiver {
 		myList.empty();
 
 		// we only want to show the next 10 songs. Variable size so we know how long to append
-		let listSize = songs.length >= 10 ? 10 : songs.length;
+		let listSize = this.songList.length >= UP_NEXT_COUNT ? UP_NEXT_COUNT : this.songList.length;
 
 		// for each song in our list, add to Up Next
 		for (let i = 0; i < listSize; i++) {
@@ -127,10 +251,10 @@ class GruvReceiver {
 			// append to our pretty table in the html
 			myList.append(
 				`<tr>	
-				<td class=\"albumArt wrap-text\"><img src=\"{{songs[i].albumArt}}\" alt=\"Album artwork\"></td>
-				<td class=\"songName wrap-text\">{{songs[i].name}}</td>
-				<td class=\"wrap-text\">{{song[i].albumName}}</td>
-				<td class=\"artist\">{{song[i].artist}}</td>
+				<td class=\"albumArt wrap-text\"><img src=\"${this.songList[i].smallAlbumArtURL}\" alt=\"Album artwork\"></td>
+				<td class=\"songName wrap-text\">${this.songList[i].songName}</td>
+				<td class=\"artist\">${this.songList[i].artists[0]}</td>
+				<td class=\"wrap-text\">${this.songList[i].albumName}</td>
 			</tr>`);
 		}
 	}
@@ -170,17 +294,8 @@ class GruvReceiver {
 	}
 
 
-	
-	// other functions that we need to define
-
-	// load informatoin for songs
 }
 
-/* (param: [optional type]) => {
-	
-})
-
-*/
 
 
 
@@ -193,5 +308,9 @@ class GruvReceiver {
 
 	$('audio').get(0).play();
 
+*/
 
+
+/*
+	event.senderId;
 */
