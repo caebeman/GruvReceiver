@@ -214,6 +214,9 @@ class GruvReceiver {
 		this.audio.addEventListener('pause', ()	=> {
 			console.log('paused');
 		});
+		this.audio.addEventListener('ended',() => {
+			console.log('ended');
+		})
 
 	}
 
