@@ -8,7 +8,7 @@ const UP_NEXT_COUNT:number = 9;
 // import SpotifyWebApi = require("./node_modules/spotify-web-api-js/src/spotify-web-api");
 
 enum CMD_TYPE {CMD_ADD_SONG, CMD_DELETE_SONG, CMD_UPDATE_PLAYLIST, CMD_PLAY, CMD_PAUSE, CMD_CHANGE_ADMIN,
-    CMD_IMPORT_PLAYLIST, CMD_SKIP, CMD_INITIALIZE_SENDER};
+    CMD_IMPORT_PLAYLIST, CMD_SKIP, CMD_INITIALIZE_SENDER}
 class Song {
 	albumName: string;
     songName: string;
@@ -103,24 +103,24 @@ class GruvReceiver {
 		    case CMD_TYPE[CMD_TYPE.CMD_DELETE_SONG]:
 		    	this.deleteSong(event.data.song);
 		    	break;
-		    case CMD_TYPE[CMD_TYPE.CMD_UPDATE_PLAYLIST]: 
-		    	this.updatePlaylist();
-		    	break;
+		    // case CMD_TYPE[CMD_TYPE.CMD_UPDATE_PLAYLIST]:
+		    // 	this.updatePlaylist();
+		    // 	break;
 		    case CMD_TYPE[CMD_TYPE.CMD_PLAY]: 
 		    	this.play();
 		    	break;
 		    case CMD_TYPE[CMD_TYPE.CMD_PAUSE]:
 		    	this.pause();
 		    	break;
-		    case CMD_TYPE[CMD_TYPE.CMD_CHANGE_ADMIN]:
-		    	this.newAdmin();
-		    	break;
+		    // case CMD_TYPE[CMD_TYPE.CMD_CHANGE_ADMIN]:
+		    // 	this.newAdmin();
+		    // 	break;
     		case CMD_TYPE[CMD_TYPE.CMD_SKIP]: 
     			this.skipSong();
     			break;
-    		case CMD_TYPE[CMD_TYPE.CMD_INITIALIZE_SENDER]:
-    			this.initSender();
-    			break;
+    		// case CMD_TYPE[CMD_TYPE.CMD_INITIALIZE_SENDER]:
+    		// 	this.initSender();
+    		// 	break;
 			case CMD_TYPE[CMD_TYPE.CMD_IMPORT_PLAYLIST]:
 				// this is currently unused
 				this.importPlaylist();
@@ -148,6 +148,9 @@ class GruvReceiver {
 		}
 		this.updateUpNext();
 	}	
+
+	// create new list of songs, not including the item to be deleted.
+	// update our list of songs to this new list of songs
 	deleteSong(delSong:Song){
 		let newList:Array<Song> = new Array<Song>();
 		for(let i = 0; i < this.songList.length - 1; i++){
@@ -158,18 +161,27 @@ class GruvReceiver {
 		this.songList = newList;
 	}
 
-	updatePlaylist(){
+/*	updatePlaylist(){
 
-	}
+	}*/
 
+    //
+	// initSender(){
+    //
+	// }
 
-	initSender(){
-
-	}
-
+	/*
+		Update our spot in the list (increment our counter)
+		Update the song that will be playing
+		Update our upNext
+	 */
 	skipSong(){
+		this.counter++;
+		this.updatePlaying();
+		this.updateUpNext();
 
 	}
+
 
 	play(){
 		this.audio.play();
@@ -233,7 +245,7 @@ class GruvReceiver {
 	}
 
 	onSenderDisconnected(event: any) {
-		console.log("exitting");
+		console.log("exiting");
 		this.receiverManager.getInstance().stop();
 	}
 
@@ -252,7 +264,7 @@ class GruvReceiver {
 		let listSize = this.songList.length >= UP_NEXT_COUNT ? UP_NEXT_COUNT : this.songList.length;
 
 		// for each song in our list, add to Up Next
-		for (let i = 0; i < listSize; i++) {
+		for (let i = this.counter; i < listSize; i++) {
 
 			// append to our pretty table in the html
 			myList.append(
@@ -267,10 +279,10 @@ class GruvReceiver {
 
 	// incrementer counter, queue up next playing song
 	// this will have some substantial sausage in it
-	songEnding(songs:Array<any>) {
-		this.counter++;
-		this.updatePlaying(songs);
-	}
+	// songEnding(songs:Array<any>) {
+	// 	this.counter++;
+	// 	this.updatePlaying(songs);
+	// }
 
 
 	// update currently playing song
@@ -284,19 +296,22 @@ class GruvReceiver {
 	 	<div class="media-subtitle"></div>
 	 </div>
 	 */
-	updatePlaying(songs:Array<any>) {
+	updatePlaying() {
 		// the song holding the information
-		let mySong = songs[this.counter];
+		let mySong = this.songList[this.counter];
 
 		// update album art
-		$('#media-artwork').css('background-image', 'url(' + mySong.albumArt + ')');
+		$('#media-artwork').css('background-image', 'url(' + mySong.largeAlbumArtURL + ')');
 
 		// update artist
-		$('#media-title').text(mySong.artist);
+		$('#media-title').text(mySong.artists[0]);
 
 		// update album
 		$('#media-subtitle').text(mySong.albumName);
 
+		$('#media-text').text(mySong.songName);
+
+		this.audio.src = mySong.previewURL;
 	}
 
 
