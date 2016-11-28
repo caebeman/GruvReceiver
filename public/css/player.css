@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-**/
+* */
 
 /* NOTE: this must be first statement in file to work on device */
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400);
@@ -79,7 +79,7 @@ table{
   padding-right: 8px;
 }
 .dash{
-  
+  display: inline-block;
 }
 .wrap-text{
   width:1%;
@@ -90,6 +90,13 @@ table{
   /* dim artist a bit*/
 }
 
+.media-title {
+  display: inline-block;
+
+}
+.media-subtitle{
+  display: inline-block;
+}
 
 
 
@@ -111,12 +118,11 @@ table{
 
 
 
+/*
 
-
-
-/* ------------------------------------------------- */
-/* Player                                            */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player                                            
+/* ------------------------------------------------- 
 
 body {
   background-color: #000;
@@ -379,6 +385,9 @@ body {
 .player .preview-mode-info .preview-mode-timer-starts {
   font-weight: bold;
 }
+.player {
+  display: block;
+}*/
 
 /* ------------------------------------------------- */
 /* Player - Video                                    */
@@ -388,7 +397,7 @@ body {
 /* Player - Video - Launching                        */
 /* ------------------------------------------------- */
 
-.player[type="video"][state="launching"] .overlay {
+/*.player[type="video"][state="launching"] .overlay {
   display: block;
 }
 
@@ -414,9 +423,9 @@ body {
   margin-left: 32px / -2;
 }
 
-/* ------------------------------------------------- */
-/* Player - Video - Loading                          */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Video - Loading                          
+/* ------------------------------------------------- 
 
 .player[type="video"][state="loading"] .overlay,
 .player[type="video"][state="loading"] .controls,
@@ -436,9 +445,9 @@ body {
   -webkit-animation: loading 2s infinite linear;
 }
 
-/* ------------------------------------------------- */
-/* Player - Video - Buffering                        */
-/* ------------------------------------------------- */
+/* -------------------------------------------------  
+/* Player - Video - Buffering                         
+/* -------------------------------------------------  
 
 .player[type="video"][state="buffering"] .overlay,
 .player[type="video"][state="buffering"] .gradient {
@@ -485,9 +494,9 @@ body {
   display: flex;
 }
 
-/* ------------------------------------------------- */
-/* Player - Video - Paused                           */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Video - Paused                           
+/* ------------------------------------------------- 
 
 .player[type="video"][state="paused"] .overlay,
 .player[type="video"][state="paused"] .gradient,
@@ -539,9 +548,9 @@ body {
   -webkit-transition: opacity 1s linear 5s;
 }
 
-/* ------------------------------------------------- */
-/* Player - Video - Playing                          */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Video - Playing                          
+/* ------------------------------------------------- 
 
 .player[type="video"][state="playing"] .overlay,
 .player[type="video"][state="playing"] .gradient,
@@ -606,9 +615,9 @@ body {
   display: flex;
 }
 
-/* ------------------------------------------------- */
-/* Player - Audio                                    */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Audio                                    
+/* ------------------------------------------------- 
 
 .player[type="audio"] .media-title {
   font-size: 22px;
@@ -635,17 +644,17 @@ body {
   display: block;
 }
 
-/* ------------------------------------------------- */
-/* Player - Audio - Launching                        */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Audio - Launching                        
+/* ------------------------------------------------- 
 
 .player[type="audio"][state="launching"] .logo {
   display: block;
 }
 
-/* ------------------------------------------------- */
-/* Player - Audio - Loading/Paused                   */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Audio - Loading/Paused                   
+/* ------------------------------------------------- 
 
 .player[type="audio"][state="loading"] .overlay,
 .player[type="audio"][state="paused"] .overlay {
@@ -713,9 +722,9 @@ body {
   top: -450px;
 }
 
-/* ------------------------------------------------- */
-/* Player - Audio - Buffering/Playing                */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Audio - Buffering/Playing                
+/* ------------------------------------------------- 
 
 .player[type="audio"][state="buffering"] .overlay,
 .player[type="audio"][state="playing"] .overlay {
@@ -774,9 +783,9 @@ body {
   margin-bottom: 116px;
 }
 
-/* ------------------------------------------------- */
-/* Player - Idle                                     */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Idle                                     
+/* ------------------------------------------------- 
 
 .player[state="idle"] .overlay {
   display: none;
@@ -790,9 +799,9 @@ body {
   display: none;
 }
 
-/* ------------------------------------------------- */
-/* Player - Done                                     */
-/* ------------------------------------------------- */
+/* ------------------------------------------------- 
+/* Player - Done                                     
+/* ------------------------------------------------- 
 
 .player[state="done"] .overlay {
   display: none;

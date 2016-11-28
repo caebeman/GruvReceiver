@@ -4,6 +4,7 @@
 
 const NAMESPACE = 'urn:x-cast:com.gruvcast.gruvcast';
 const UP_NEXT_COUNT:number = 9;
+const NO_SONGS = "No songs in playlist, add more."
 
 // import SpotifyWebApi = require("./node_modules/spotify-web-api-js/src/spotify-web-api");
 
@@ -28,6 +29,15 @@ class Song {
     	this.songID = songID;
     }
 }
+
+// class mAudioTrack implements AudioTrack {
+// 	public enabled;
+// 	public id;
+// 	public kind;
+// 	public language;
+// 	public label;
+// 	public sourceBuffer;
+// }
 
 class Message{
 	cmd:CMD_TYPE;
@@ -144,6 +154,7 @@ class GruvReceiver {
 		this.songList.push(song);
 		if(!this.hasFirstSong){
 			this.audio.src = song.previewURL;
+			this.updatePlaying();
 			this.hasFirstSong = true;
 		}
 		this.updateUpNext();
@@ -196,15 +207,21 @@ class GruvReceiver {
 	}
 
 	newAdmin(){
-
+		
 	}
 
+	createAudTrack(song:Song){
+
+
+	}
 
 
 	// audio event listeners
 	initMediaEventListeners() {
 		this.audio = <HTMLMediaElement> $('#audioPlayer').get(0); 
-
+		this.audio.autoplay = true;
+		this.audio.controls = true;
+		this.audio.preload = 'auto';
 		this.audio.addEventListener('error', (error)	=> {
 			console.log('Error');
 		}); 
@@ -216,6 +233,9 @@ class GruvReceiver {
 		});
 		this.audio.addEventListener('ended',() => {
 			console.log('ended');
+			this.counter++;
+			this.updateUpNext();
+			this.updatePlaying();
 		})
 
 	}
@@ -267,16 +287,14 @@ class GruvReceiver {
 		let listSize = this.songList.length >= UP_NEXT_COUNT ? UP_NEXT_COUNT : this.songList.length;
 
 		// for each song in our list, add to Up Next
-		for (let i = this.counter; i < listSize; i++) {
+		for (let i = this.counter+1; i < listSize; i++) {
 
 			// append to our pretty table in the html
 			myList.append(
-				`<tr>	
-				<td class=\"albumArt wrap-text\"><img src=\"${this.songList[i].smallAlbumArtURL}\" alt=\"Album artwork\"></td>
-				<td class=\"songName wrap-text\">${this.songList[i].songName}</td>
-				<td class=\"artist\">${this.songList[i].artists[0]}</td>
-				<td class=\"wrap-text\">${this.songList[i].albumName}</td>
-			</tr>`);
+				`<tr><td class=\"albumArt wrap-text\"><img src=\"${this.songList[i].smallAlbumArtURL}\" 
+alt=\"Album artwork\"></td><td class=\"songName wrap-text\">
+${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
+.artists[0]}</td><td class=\"wrap-text\">${this.songList[i].albumName}</td></tr>`);
 		}
 	}
 
@@ -301,20 +319,30 @@ class GruvReceiver {
 	 */
 	updatePlaying() {
 		// the song holding the information
-		let mySong = this.songList[this.counter];
+		if(this.counter < this.songList.length){
+			let mySong = this.songList[this.counter];
 
-		// update album art
-		$('#media-artwork').css('background-image', 'url(' + mySong.largeAlbumArtURL + ')');
+			// update album art
+			$('#albumArt').prop('src', mySong.largeAlbumArtURL);
 
-		// update artist
-		$('#media-title').text(mySong.artists[0]);
+			// update artist
+			$('#songTitle').text(mySong.songName);//artists[0]);
 
-		// update album
-		$('#media-subtitle').text(mySong.albumName);
+			// update album
+			$('#album').text(mySong.albumName);
 
-		$('#media-text').text(mySong.songName);
+			$('#artist').text(mySong.artists[0]);
 
-		this.audio.src = mySong.previewURL;
+			this.audio.src = mySong.previewURL;
+
+			this.audio.play();
+			
+		} else {
+			// make own div with bigger css in different place css
+			$("#songTitle").text(NO_SONGS);
+
+		}
+
 	}
 
 

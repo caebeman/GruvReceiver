@@ -55,29 +55,9 @@ The overlay layer holds:
 </head>
 <body style="margin: 0" background="css/assets/background.jpg">
     <div class='container-fluid'>
-    <audio id="audioPlayer"></audio>
         <!-- Player portion of code (left hand side of screen) -->
         <div class='col-md-6 left-col'>
-            <div id="player" class="player">
-            <div class="media">
-                <audio ></audio>
-            </div>
 
-            <div class="logo">
-
-            </div>
-
-            <div class="spinner">
-
-            </div>
-
-            <div class="watermark">
-
-            </div>
-
-            <div class="gradient">
-
-            </div>
 
             <!-- this will media artwork and information during loading.. should ignore this for now and get
              basic things working
@@ -85,16 +65,37 @@ The overlay layer holds:
             <div class="overlay">
                 <div class="media-info">
                     <div class="media-artwork">
-                        <img src="css/assets/albumArt64.png" alt="Album artwork">
+                        <img id="albumArt" src="https://i.scdn.co/image/eb669772a583cba3fac0a9d5368bcdf3cb6a6fff" alt="Album artwork">
                     </div>
-                    <div class="media-text">
-                        <div class="media-title"></div>
-                        <div class="media-subtitle"></div>
+                    <div class="media-text text-center">
+                        <div id="songTitle" class="media-title">Currently Plaing Song</div>
+                        <div id="dash" class="dash ">-</div>
+                        <div id="album" class="media-subtitle">Album Name that is usually not super long</div>
+                        <div id="artist" class="media-artist">Artist Name</div>
                     </div>
                 </div>
 
+                <div id="player" class="player text-center">
+                    <div id="audioWrap" class="media">
+                        <audio id="audioPlayer"></audio>
+                    </div>
+
+                    <div class="logo">
+
+                    </div>
+
+                    <div class="spinner">
+
+                    </div>
+
+                    <div class="watermark">
+
+                    </div>
+
+                    <div class="gradient">
+                </div>
                 <!-- -->
-                <div class="preview-mode-info">
+               <!--  <div class="preview-mode-info">
                     <div class="preview-mode-artwork"></div>
                     <div class="preview-mode-text">
                         <div class="preview-mode-timer">
@@ -105,7 +106,7 @@ The overlay layer holds:
                         <div class="preview-mode-title"></div>
                         <div class="preview-mode-subtitle"></div>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="controls">
                     <span class="controls-play-pause"></span>
@@ -126,7 +127,7 @@ The overlay layer holds:
                 <label for="upNext" class="row upNextLabel">Up Next</label>
                 <table id="upNext" class='vertical-center'>
                     <tbody  id='upNextList'>
-                        <tr>
+                        <!-- <tr>
                             <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
                             <td class="songName wrap-text">Song Name</td>
                             <td class="wrap-text">-</td>
@@ -174,7 +175,7 @@ The overlay layer holds:
                             <td class="wrap-text">-</td>
                             <td class="artist">Artist Name</td>
                         </tr>
-<!--                        <tr>
+                        <tr>
                             <td class="albumArt wrap-text"><img src="css/assets/albumArt64.png" alt="Album artwork"></td>
                             <td class="songName wrap-text">Song Name</td>
                             <td class="wrap-text">-</td>
