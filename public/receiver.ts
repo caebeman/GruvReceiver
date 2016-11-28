@@ -267,7 +267,9 @@ class GruvReceiver {
 		this.receiverManager.getInstance().stop();
 	}
 
+	sendPlayList() {
 
+	}
 
 	// update our Up Next list
 	updateUpNext(){
