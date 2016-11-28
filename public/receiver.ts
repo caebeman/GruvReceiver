@@ -204,6 +204,7 @@ class GruvReceiver {
 		});
 
 	}
+
 	initMessageListeners() {
 		this.messageBus.onMessage = (event) => this.onMessage(event);
 	}
@@ -211,6 +212,11 @@ class GruvReceiver {
 	initConnectionListeners() {
 		this.receiverManager.onSenderConnected = (event) => this.onSenderConnected(event);
 		this.receiverManager.onSenderDisconnected = (event) => this.onSenderDisconnected(event);
+	}
+
+
+	songEndingListener() {
+
 	}
 
 	
