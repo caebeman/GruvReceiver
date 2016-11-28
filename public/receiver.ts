@@ -71,7 +71,7 @@ class GruvReceiver {
 	// Modify to disable debug
 	private debug: boolean = true;
 
-	constructor(private element:HTMLElement, private cast, private $:JQuery) {
+	constructor(private cast, private $:JQuery) {
 		// Set logging
 		if(this.debug){
 			cast.player.api.setLoggerLevel(cast.player.api.LoggerLevel.DEBUG);
@@ -141,7 +141,9 @@ class GruvReceiver {
 		
 	}
 
+	// adds the song to the queue
 	addSong(song:Song){
+		// Songs won't play if they have a / at the end
 		if(song.previewURL.charAt(song.previewURL.length-1) == '/'){
 			song.previewURL = song.previewURL.substring(0,song.previewURL.length-1);
 		}
@@ -151,6 +153,7 @@ class GruvReceiver {
 		if(song.largeAlbumArtURL.charAt(song.largeAlbumArtURL.length-1) == '/'){
 			song.largeAlbumArtURL = song.largeAlbumArtURL.substring(0,song.largeAlbumArtURL.length-1);
 		}
+		// add the song, and update the display
 		this.songList.push(song);
 		if(!this.hasFirstSong){
 			this.audio.src = song.previewURL;
@@ -172,14 +175,6 @@ class GruvReceiver {
 		this.songList = newList;
 	}
 
-/*	updatePlaylist(){
-
-	}*/
-
-    //
-	// initSender(){
-    //
-	// }
 
 	/*
 		Update our spot in the list (increment our counter)
@@ -203,16 +198,11 @@ class GruvReceiver {
 	}
 
 	importPlaylist(){
-
+		// TODO
 	}
 
 	newAdmin(){
 		
-	}
-
-	createAudTrack(song:Song){
-
-
 	}
 
 
@@ -262,9 +252,13 @@ class GruvReceiver {
 	onSenderConnected(event:any) {
 		console.log("Sender connected");
 		if(!this.admin){
-			this.admin = event.data.userId;
+			this.admin = event.senderId;
 		}
-		// this.connectedUsers.push(event.data.userId);
+		this.connectedUsers.push(event.senderId);
+
+
+		// TODO
+		// this.messageBus.broadcast();
 	}
 
 	onSenderDisconnected(event: any) {
@@ -298,25 +292,12 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 		}
 	}
 
-	// incrementer counter, queue up next playing song
-	// this will have some substantial sausage in it
-	// songEnding(songs:Array<any>) {
-	// 	this.counter++;
-	// 	this.updatePlaying(songs);
-	// }
+
 
 
 	// update currently playing song
 	// this will also probably have a sausage in it
 	// WIP
-	/*                <div class="media-info">
-	 <div class="media-artwork">
-	 </div>
-	 <div class="media-text">
-	 	<div class="media-title"></div>
-	 	<div class="media-subtitle"></div>
-	 </div>
-	 */
 	updatePlaying() {
 		// the song holding the information
 		if(this.counter < this.songList.length){
@@ -326,7 +307,7 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 			$('#albumArt').prop('src', mySong.largeAlbumArtURL);
 
 			// update artist
-			$('#songTitle').text(mySong.songName);//artists[0]);
+			$('#songTitle').text(mySong.songName);
 
 			// update album
 			$('#album').text(mySong.albumName);
@@ -348,21 +329,3 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 
 }
 
-
-
-
-/*
-	need to use:
-		() => {}
-	for callback functions so this scope is correct
-
-	redo all stuff from class monday
-
-	$('audio').get(0).play();
-
-*/
-
-
-/*
-	event.senderId;
-*/
