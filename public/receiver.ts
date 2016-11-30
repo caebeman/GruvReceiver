@@ -19,7 +19,7 @@ class Song {
     largeAlbumArtURL: string;
     songID: string;
 
-    constructor(albumName:string, songName:string, artists:Array<string>, previewURL:string, smallAlbumArt:string, largeAlbumArt:string, songID:string){
+    constructor (albumName:string, songName:string, artists:Array<string>, previewURL:string, smallAlbumArt:string, largeAlbumArt:string, songID:string){
     	this.albumName = albumName;
     	this.songName = songName;
     	this.artists = artists;
@@ -267,9 +267,7 @@ class GruvReceiver {
 		this.receiverManager.getInstance().stop();
 	}
 
-	sendPlayList() {
 
-	}
 
 	// update our Up Next list
 	updateUpNext(){
@@ -305,7 +303,8 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 		// the song holding the information
 		if(this.counter < this.songList.length){
 			let mySong = this.songList[this.counter];
-
+			$("#songInfo").show();
+			this.audio.controls = true;
 			// update album art
 			$('#albumArt').prop('src', mySong.largeAlbumArtURL);
 
@@ -318,15 +317,13 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 			$('#artist').text(mySong.artists[0]);
 
 			this.audio.src = mySong.previewURL;
-
-			this.audio.play();
+			if (!this.hasFirstSong)
+				this.audio.play();
 			
 		} else {
 			// make own div with bigger css in different place css
-			$("#songTitle").text(NO_SONGS);
-			$('#album').text("");
-			$('#artists').text("");
-			$("#albumArt").prop('src', "css/assets/not_playing.png")
+			$("#songInfo").hide();
+			this.audio.controls = false;
 
 		}
 
