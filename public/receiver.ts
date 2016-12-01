@@ -303,8 +303,10 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 		// the song holding the information
 		if(this.counter < this.songList.length){
 			let mySong = this.songList[this.counter];
+
 			$("#songInfo").show();
 			this.audio.controls = true;
+
 			// update album art
 			$('#albumArt').prop('src', mySong.largeAlbumArtURL);
 
