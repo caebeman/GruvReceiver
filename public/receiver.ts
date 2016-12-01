@@ -9,7 +9,7 @@ const NO_SONGS = "No songs in playlist, add more."
 // import SpotifyWebApi = require("./node_modules/spotify-web-api-js/src/spotify-web-api");
 
 enum CMD_TYPE {CMD_ADD_SONG, CMD_DELETE_SONG, CMD_UPDATE_PLAYLIST, CMD_PLAY, CMD_PAUSE, CMD_CHANGE_ADMIN,
-    CMD_IMPORT_PLAYLIST, CMD_SKIP, CMD_INITIALIZE_SENDER}
+    CMD_IMPORT_PLAYLIST, CMD_SKIP, CMD_INITIALIZE_SENDER, CMD_END_SESSION}
 class Song {
 	albumName: string;
     songName: string;
@@ -30,22 +30,20 @@ class Song {
     }
 }
 
-// class mAudioTrack implements AudioTrack {
-// 	public enabled;
-// 	public id;
-// 	public kind;
-// 	public language;
-// 	public label;
-// 	public sourceBuffer;
-// }
 
 class Message{
-	cmd:CMD_TYPE;
+	command: string;
 	song: Song;
-	constructor(cmd:CMD_TYPE, song:Song){
-		this.cmd = cmd;
-		this.song = song;
+	newAdmin: String;
+	isAdmin: boolean;
+	updatedPlaylist: Array<Song>;
+
+
+	constructor(cmd: CMD_TYPE, songList:Array<Song>=null){
+		this.command = CMD_TYPE[cmd];
+		this.updatedPlaylist = songList;
 	}
+
 }
 
 class GruvReceiver {
@@ -135,6 +133,11 @@ class GruvReceiver {
 				// this is currently unused
 				this.importPlaylist();
 				break;
+			case CMD_TYPE[CMD_TYPE.CMD_END_SESSION]:
+				// this is currently unused
+				this.receiverManager.stop();
+				break;
+
 		    default:
 		    	// do nothing
 		}
@@ -159,9 +162,11 @@ class GruvReceiver {
 			$("#songInfo").show();
 			this.audio.src = song.previewURL;
 			this.updatePlaying();
+			// needs to be set here, is checked in updatePlaying
 			this.hasFirstSong = true;
 		}
 		this.updateUpNext();
+		this.sendPlayList();
 	}	
 
 	// create new list of songs, not including the item to be deleted.
@@ -174,6 +179,7 @@ class GruvReceiver {
 			}
 		}
 		this.songList = newList;
+		this.sendPlayList();
 	}
 
 
@@ -186,6 +192,7 @@ class GruvReceiver {
 		this.counter++;
 		this.updatePlaying();
 		this.updateUpNext();
+		this.sendPlayList();
 
 	}
 
@@ -203,7 +210,42 @@ class GruvReceiver {
 	}
 
 	newAdmin(){
-		
+		/*
+			2
+
+			need to test to see how often device disconnect from cc
+			might need some fancy shit to make sure admin doesn't lose priviledges randomly
+
+			pick the best one based on how cc sessions work, 2nd is probably easier
+
+			Proposed Solns:
+
+			1:
+				Send message to curAdmin trying to remove admin 
+				curAdmin can either respond withtin ~10 second or new admin is selected
+					what happens if admin is disconnected right when message is sent? 
+						retry after a second or 2?
+					do messages get queued for after reconnect?
+						no need to retry
+						this is what we hopefor
+				send message to new Admin telling them their new status
+
+			2:
+				admin sends message everytime they reconnect saying they are still admin
+				if they disconnect and dont send a message for 30 seconds choose new admin
+					how choose new admin, want a way to select
+
+				need to check if disconnect when phone is off how to get aroudn that
+					if phone is 'sleeping' can still send messages saying they need admin
+
+
+			
+		*/
+		let m: Message = new Message(CMD_TYPE.CMD_CHANGE_ADMIN);
+		m.isAdmin = false;
+		this.messageBus.send(this.admin, m);
+		m.isAdmin = true;
+		this.messageBus.send(this.newAdmin, m);
 	}
 
 
@@ -213,10 +255,10 @@ class GruvReceiver {
 		this.audio.autoplay = true;
 		this.audio.controls = true;
 		this.audio.preload = 'auto';
-		this.audio.addEventListener('error', (error)	=> {
+		this.audio.addEventListener('error', (error) => {
 			console.log('Error');
 		}); 
-		this.audio.addEventListener('playing', ()	=> {
+		this.audio.addEventListener('playing', () => {
 			console.log('Playing');
 		});
 		this.audio.addEventListener('pause', ()	=> {
@@ -227,7 +269,12 @@ class GruvReceiver {
 			this.counter++;
 			this.updateUpNext();
 			this.updatePlaying();
-		})
+			this.sendPlayList();
+			// need to reset this so we add a new song it updates the song to play as well as the display
+			if(this.counter == this.songList.length){
+				this.hasFirstSong = false;
+			}
+		});
 
 	}
 
@@ -251,23 +298,31 @@ class GruvReceiver {
 	// init our playlist queue here
 	// determine who is admin
 	onSenderConnected(event:any) {
+		let m: Message = new Message(CMD_TYPE.CMD_INITIALIZE_SENDER, this.songList.slice(this.counter));
 		console.log("Sender connected");
 		if(!this.admin){
+			m.isAdmin;
 			this.admin = event.senderId;
 		}
-		this.connectedUsers.push(event.senderId);
+
+		this.messageBus.send(event.senderId, m);
 
 
-		// TODO
-		// this.messageBus.broadcast();
 	}
 
 	onSenderDisconnected(event: any) {
 		console.log("exiting");
-		this.receiverManager.getInstance().stop();
+		// TODO change this later for actual admin logic
+		if(event.senderId == this.admin){
+			this.admin = null;
+		}
+		// this.receiverManager.stop();
 	}
 
-
+	sendPlayList() {
+		let m: Message = new Message(CMD_TYPE.CMD_UPDATE_PLAYLIST, this.songList.slice(this.counter));
+		this.messageBus.broadcast(m);
+	}
 
 	// update our Up Next list
 	updateUpNext(){
@@ -319,7 +374,8 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 			$('#artist').text(mySong.artists[0]);
 
 			this.audio.src = mySong.previewURL;
-			if (!this.hasFirstSong)
+
+			if(this.hasFirstSong)
 				this.audio.play();
 			
 		} else {
