@@ -305,10 +305,6 @@ class GruvReceiver {
 			this.messageBus.send(event.senderId, m);
 			this.admin = event.senderId;
 		} else {
-			if(this.admin == event.senderId){
-				m.isAdmin = true;
-				this.messageBus.send(event.senderId, m);
-			}
 			this.messageBus.send(event.senderId, m);
 		}
 		
