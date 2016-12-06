@@ -32,11 +32,11 @@ class Song {
 
 
 class Message{
-	command: string;
-	song: Song;
-	newAdmin: String;
-	isAdmin: boolean;
-	updatedPlaylist: Array<Song>;
+	public command: string;
+	public song: Song;
+	public newAdmin: String;
+	public isAdmin: boolean;
+	public updatedPlaylist: Array<Song>;
 
 
 	constructor(cmd: CMD_TYPE, songList:Array<Song>=null){
@@ -80,12 +80,6 @@ class GruvReceiver {
 		// get api instances
 		this.receiverManager = cast.receiver.CastReceiverManager.getInstance();
 		this.messageBus = this.receiverManager.getCastMessageBus(NAMESPACE, cast.receiver.CastMessageBus.MessageType.JSON);
-		// need to call this after delcaring our namespace
-		this.receiverManager.start();
-
-
-
-		
 		// Init receiver handlers
 		this.initConnectionListeners();
 
@@ -98,6 +92,12 @@ class GruvReceiver {
 
 		//
 		this.initMediaEventListeners();
+		// need to call this after delcaring our namespace
+		this.receiverManager.start();
+
+
+
+		
 
 
 		
@@ -135,6 +135,7 @@ class GruvReceiver {
 				break;
 			case CMD_TYPE[CMD_TYPE.CMD_END_SESSION]:
 				// this is currently unused
+				console.log("End session");
 				this.receiverManager.stop();
 				break;
 
@@ -190,10 +191,9 @@ class GruvReceiver {
 	 */
 	skipSong(){
 		this.counter++;
-		this.updatePlaying();
+		this.updatePlaying(); 
 		this.updateUpNext();
 		this.sendPlayList();
-
 	}
 
 
@@ -299,23 +299,39 @@ class GruvReceiver {
 	// determine who is admin
 	onSenderConnected(event:any) {
 		let m: Message = new Message(CMD_TYPE.CMD_INITIALIZE_SENDER, this.songList.slice(this.counter));
-		console.log("Sender connected");
-		if(!this.admin){
-			m.isAdmin;
+		console.log("Sender connected: " + event.senderId);
+		if(!this.admin || this.admin == event.senderId){
+			m.isAdmin = true;
+			this.messageBus.send(event.senderId, m);
 			this.admin = event.senderId;
+		} else {
+			if(this.admin == event.senderId){
+				m.isAdmin = true;
+				this.messageBus.send(event.senderId, m);
+			}
+			this.messageBus.send(event.senderId, m);
 		}
-
-		this.messageBus.send(event.senderId, m);
-
-
+		
 	}
 
 	onSenderDisconnected(event: any) {
 		console.log("exiting");
-		// TODO change this later for actual admin logic
-		if(event.senderId == this.admin){
-			this.admin = null;
+		// only exit if we have no senders left and the last sender chose to disconnect
+		if(this.receiverManager.getSenders().length === 0 
+			&& event.reason === this.cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER){
+
+			if(this.admin == event.senderId){
+				this.admin = this.receiverManager.getSenders[0];
+				let m = new Message(CMD_TYPE.CMD_CHANGE_ADMIN, this.songList.slice(this.counter));
+				m.isAdmin = true;
+				this.messageBus.send(this.admin, m);
+			}
+			this.receiverManager.stop();
 		}
+		// TODO change this later for actual admin logic
+		// if(event.senderId == this.admin){
+		// 	// this.admin = null;
+		// }
 		// this.receiverManager.stop();
 	}
 
@@ -372,7 +388,7 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 			$('#album').text(mySong.albumName);
 
 			$('#artist').text(mySong.artists[0]);
-
+			$('#noSongs').text('');
 			this.audio.src = mySong.previewURL;
 
 			if(this.hasFirstSong)
@@ -381,7 +397,10 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 		} else {
 			// make own div with bigger css in different place css
 			$("#songInfo").hide();
+			$('#albumArt').prop('src', 'css/assets/not_playing.png');
+			$('#noSongs').text(NO_SONGS);
 			this.audio.controls = false;
+
 
 		}
 
