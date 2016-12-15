@@ -3,7 +3,7 @@
 /* /// <reference path="typings/index.d.ts" /> */
 
 const NAMESPACE = 'urn:x-cast:com.gruvcast.gruvcast';
-const UP_NEXT_COUNT:number = 9;
+const UP_NEXT_COUNT:number = 10;
 const NO_SONGS = "No songs in playlist, add more."
 
 // import SpotifyWebApi = require("./node_modules/spotify-web-api-js/src/spotify-web-api");
@@ -111,36 +111,25 @@ class GruvReceiver {
 		    case CMD_TYPE[CMD_TYPE.CMD_DELETE_SONG]:
 		    	this.deleteSong(event.data.song);
 		    	break;
-		    // case CMD_TYPE[CMD_TYPE.CMD_UPDATE_PLAYLIST]:
-		    // 	this.updatePlaylist();
-		    // 	break;
 		    case CMD_TYPE[CMD_TYPE.CMD_PLAY]: 
 		    	this.play();
 		    	break;
 		    case CMD_TYPE[CMD_TYPE.CMD_PAUSE]:
 		    	this.pause();
 		    	break;
-		    // case CMD_TYPE[CMD_TYPE.CMD_CHANGE_ADMIN]:
-		    // 	this.newAdmin();
-		    // 	break;
     		case CMD_TYPE[CMD_TYPE.CMD_SKIP]: 
     			this.skipSong();
     			break;
-    		// case CMD_TYPE[CMD_TYPE.CMD_INITIALIZE_SENDER]:
-    		// 	this.initSender();
-    		// 	break;
 			case CMD_TYPE[CMD_TYPE.CMD_IMPORT_PLAYLIST]:
-				// this is currently unused
-				this.importPlaylist();
+				this.importPlaylist(event.data.updatedPlaylist);
 				break;
 			case CMD_TYPE[CMD_TYPE.CMD_END_SESSION]:
-				// this is currently unused
 				console.log("End session");
 				this.receiverManager.stop();
 				break;
-
 		    default:
 		    	// do nothing
+		    	// the message must have gotten corrupted some how
 		}
 		
 	}
@@ -205,8 +194,37 @@ class GruvReceiver {
 		this.audio.pause();
 	}
 
-	importPlaylist(){
+	importPlaylist(songs:Array<Song>){
 		// TODO
+		// use event.data.
+		for( let i = 0; i < songs.length; i++ ){
+			let song:Song = songs[i];
+			if(song.previewURL.charAt(song.previewURL.length-1) == '/'){
+				song.previewURL = song.previewURL.substring(0,song.previewURL.length-1);
+			}
+			if(song.smallAlbumArtURL.charAt(song.smallAlbumArtURL.length-1) == '/'){
+				song.smallAlbumArtURL = song.smallAlbumArtURL.substring(0,song.smallAlbumArtURL.length-1);
+			}
+			if(song.largeAlbumArtURL.charAt(song.largeAlbumArtURL.length-1) == '/'){
+				song.largeAlbumArtURL = song.largeAlbumArtURL.substring(0,song.largeAlbumArtURL.length-1);
+			}	
+			songs[i] = song;
+		}
+
+		
+		// add the song, and update the display
+		this.songList.concat(songs);
+		let song:Song = this.songList[0];
+
+		if(!this.hasFirstSong){
+			$("#songInfo").show();
+			this.audio.src = song.previewURL;
+			this.updatePlaying();
+			// needs to be set here, is checked in updatePlaying
+			this.hasFirstSong = true;
+		}
+		this.updateUpNext();
+		this.sendPlayList();
 	}
 
 	newAdmin(){
@@ -285,6 +303,7 @@ class GruvReceiver {
 	initConnectionListeners() {
 		this.receiverManager.onSenderConnected = (event) => this.onSenderConnected(event);
 		this.receiverManager.onSenderDisconnected = (event) => this.onSenderDisconnected(event);
+		this.receiverManager.onShutdown = (event) => this.onShutdown(event);
 	}
 
 
@@ -300,6 +319,10 @@ class GruvReceiver {
 	onSenderConnected(event:any) {
 		let m: Message = new Message(CMD_TYPE.CMD_INITIALIZE_SENDER, this.songList.slice(this.counter));
 		console.log("Sender connected: " + event.senderId);
+		console.log("Current Admin: " + this.admin);
+		// wait a bit before sending the message
+		setTimeout(()=>{}, 3000);
+		console.log("Current time: " + new Date());
 		if(!this.admin || this.admin == event.senderId){
 			m.isAdmin = true;
 			this.messageBus.send(event.senderId, m);
@@ -311,24 +334,30 @@ class GruvReceiver {
 	}
 
 	onSenderDisconnected(event: any) {
-		console.log("exiting");
+		console.log("sender disconnected");
 		// only exit if we have no senders left and the last sender chose to disconnect
 		if(this.receiverManager.getSenders().length === 0 
 			&& event.reason === this.cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER){
-
-			if(this.admin == event.senderId){
-				this.admin = this.receiverManager.getSenders[0];
-				let m = new Message(CMD_TYPE.CMD_CHANGE_ADMIN, this.songList.slice(this.counter));
-				m.isAdmin = true;
-				this.messageBus.send(this.admin, m);
-			}
 			this.receiverManager.stop();
+		}
+		if(this.admin == event.senderId){
+			this.admin = this.receiverManager.getSenders[0];
+			let m = new Message(CMD_TYPE.CMD_CHANGE_ADMIN, this.songList.slice(this.counter));
+			m.isAdmin = true;
+			this.messageBus.send(this.admin, m);
 		}
 		// TODO change this later for actual admin logic
 		// if(event.senderId == this.admin){
 		// 	// this.admin = null;
 		// }
 		// this.receiverManager.stop();
+	}
+
+
+	onShutdown(event: any) {
+		event.preventDefault();
+		console.log("Trying to shutdown");
+		return;
 	}
 
 	sendPlayList() {
@@ -346,10 +375,10 @@ class GruvReceiver {
 		myList.empty();
 
 		// we only want to show the next 10 songs. Variable size so we know how long to append
-		let listSize = this.songList.length >= UP_NEXT_COUNT ? UP_NEXT_COUNT : this.songList.length;
+		let listSize = ((this.songList.length - this.counter) >= UP_NEXT_COUNT)	 ? UP_NEXT_COUNT : this.songList.length - this.counter;
 
 		// for each song in our list, add to Up Next
-		for (let i = this.counter+1; i < listSize; i++) {
+		for (let i = this.counter+1; i < this.counter + listSize; i++) {
 
 			// append to our pretty table in the html
 			myList.append(
@@ -359,6 +388,9 @@ ${this.songList[i].songName}</td><td class=\"artist\">${this.songList[i]
 .artists[0]}</td><td class=\"wrap-text\">${this.songList[i].albumName}</td></tr>`);
 		}
 	}
+
+
+
 
 
 
