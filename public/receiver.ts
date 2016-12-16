@@ -163,13 +163,14 @@ class GruvReceiver {
 	// update our list of songs to this new list of songs
 	deleteSong(delSong:Song){
 		let newList:Array<Song> = new Array<Song>();
-		for(let i = 0; i < this.songList.length - 1; i++){
+		for(let i = 0; i < this.songList.length; i++){
 			if(this.songList[i].songID != delSong.songID){
 				newList.push(this.songList[i])
 			}
 		}
 		this.songList = newList;
 		this.sendPlayList();
+		this.updateUpNext();
 	}
 
 
@@ -213,8 +214,8 @@ class GruvReceiver {
 
 		
 		// add the song, and update the display
-		this.songList.concat(songs);
-		let song:Song = this.songList[0];
+		this.songList = this.songList.concat(songs);
+		let song:Song = this.songList[this.counter];
 
 		if(!this.hasFirstSong){
 			$("#songInfo").show();
