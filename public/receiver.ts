@@ -162,15 +162,19 @@ class GruvReceiver {
 	// create new list of songs, not including the item to be deleted.
 	// update our list of songs to this new list of songs
 	deleteSong(delSong:Song){
-		let newList:Array<Song> = new Array<Song>();
-		for(let i = 0; i < this.songList.length; i++){
-			if(this.songList[i].songID != delSong.songID){
-				newList.push(this.songList[i])
+		if(this.counter == this.songList.length - 1){
+			this.skipSong();
+		} else {
+			let newList:Array<Song> = new Array<Song>();
+			for(let i = 0; i < this.songList.length; i++){
+				if(this.songList[i].songID != delSong.songID){
+					newList.push(this.songList[i])
+				}
 			}
+			this.songList = newList;
+			this.sendPlayList();
+			this.updateUpNext();
 		}
-		this.songList = newList;
-		this.sendPlayList();
-		this.updateUpNext();
 	}
 
 
@@ -181,6 +185,10 @@ class GruvReceiver {
 	 */
 	skipSong(){
 		this.counter++;
+		if(this.counter == this.songList.length){
+			this.audio.pause();
+			this.hasFirstSong = false;
+		}
 		this.updatePlaying(); 
 		this.updateUpNext();
 		this.sendPlayList();
@@ -228,7 +236,7 @@ class GruvReceiver {
 		this.sendPlayList();
 	}
 
-	newAdmin(){
+	changeAdmin(){
 		/*
 			2
 
@@ -260,11 +268,13 @@ class GruvReceiver {
 
 			
 		*/
+
+		let newAdmin = this.receiverManager.getSenders()[1];
 		let m: Message = new Message(CMD_TYPE.CMD_CHANGE_ADMIN);
-		m.isAdmin = false;
-		this.messageBus.send(this.admin, m);
-		m.isAdmin = true;
-		this.messageBus.send(this.newAdmin, m);
+		// m.isAdmin = false;
+		// this.messageBus.send(this.admin, m);
+		// m.isAdmin = true;
+		this.messageBus.send(newAdmin, m);
 	}
 
 
@@ -276,6 +286,14 @@ class GruvReceiver {
 		this.audio.preload = 'auto';
 		this.audio.addEventListener('error', (error) => {
 			console.log('Error');
+			this.counter++;
+			this.updateUpNext();
+			this.updatePlaying();
+			this.sendPlayList();
+			// need to reset this so we add a new song it updates the song to play as well as the display
+			if(this.counter == this.songList.length){
+				this.hasFirstSong = false;
+			}
 		}); 
 		this.audio.addEventListener('playing', () => {
 			console.log('Playing');
@@ -335,14 +353,14 @@ class GruvReceiver {
 	}
 
 	onSenderDisconnected(event: any) {
-		console.log("sender disconnected");
+		console.log("sender disconnected # connected: " + this.receiverManager.getSenders().length);
 		// only exit if we have no senders left and the last sender chose to disconnect
 		if(this.receiverManager.getSenders().length === 0 
 			&& event.reason === this.cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER){
 			this.receiverManager.stop();
 		}
 		if(this.admin == event.senderId){
-			this.admin = this.receiverManager.getSenders[0];
+			this.admin = this.receiverManager.getSenders()[0];
 			let m = new Message(CMD_TYPE.CMD_CHANGE_ADMIN, this.songList.slice(this.counter));
 			m.isAdmin = true;
 			this.messageBus.send(this.admin, m);

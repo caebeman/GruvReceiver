@@ -67,6 +67,11 @@ The overlay layer holds:
                     <div class="media-artwork">
                         <img class = "curAlbumArt" id="albumArt" src="css/assets/not_playing.png" alt="Album artwork">
                     </div>
+                    <div id="player" class="player text-center">
+                        <div id="audioWrap" class="media">
+                            <audio id="audioPlayer"></audio>
+                        </div>
+                    </div>
                     <div class="media-text text-center" hidden id="songInfo">
                         <div id="songTitle" class="media-title">Currently Plaing Song</div>
                         <div id="dash" class="dash ">-</div>
@@ -75,25 +80,8 @@ The overlay layer holds:
                     </div>
                 </div>
 
-                <div id="player" class="player text-center">
-                    <div id="audioWrap" class="media">
-                        <audio id="audioPlayer"></audio>
-                    </div>
 
-                    <div class="logo">
 
-                    </div>
-
-                    <div class="spinner">
-
-                    </div>
-
-                    <div class="watermark">
-
-                    </div>
-
-                    <div class="gradient">
-                </div>
                 <!-- -->
                <!--  <div class="preview-mode-info">
                     <div class="preview-mode-artwork"></div>
@@ -119,7 +107,7 @@ The overlay layer holds:
                 </div>
             </div>
         </div>
-        </div>
+
 
         <!-- Upnext Portion of code (right hand side of screen) -->
         <div class='col-md-6 right-col'>
